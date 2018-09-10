@@ -1,0 +1,209 @@
+using UnityEngine;
+
+public class Hacker  : MonoBehaviour {
+
+    //Game State
+    int level;
+    string Code;
+    enum Screen {MainMenu, PasswordEntry, WinScreen, NextLevelQuestion }
+    Screen CurrentScreen;
+    string[] Lv1Passwords = { "cookies", "flour", "milk", "eggs", "sugar" };
+    string[] Lv2Passwords = { "meat", "carrots", "tomatoes", "cucumbers", "chicken" };
+    string[] Lv3Passwords = { "diplomacy", "democracy", "politics", "presidency", "elections" };
+
+    void Start() 
+    {
+        Terminal.WriteLine("Well hello there,");
+        Terminal.WriteLine("welcome to Terminal Hacker!");
+        MainMenuText();
+    }
+
+
+    void MainMenuText() 
+    {
+        CurrentScreen = Screen.MainMenu;
+        Terminal.WriteLine("");
+        Terminal.WriteLine("Choose the place you want to");
+        Terminal.WriteLine("hack in to by entering its number");
+        Terminal.WriteLine("");
+        Terminal.WriteLine("1- the bakery");
+        Terminal.WriteLine("2- a supermarket");
+        Terminal.WriteLine("3- the white house");
+        Terminal.WriteLine("");
+        Terminal.WriteLine("your choice:");
+    }
+
+    void OnUserInput(string Input)
+    {
+        if (Input == "menu")
+        {
+            Terminal.ClearScreen();
+            Terminal.WriteLine("welcome back!");
+            MainMenuText();
+        }
+        else if (CurrentScreen == Screen.MainMenu)
+        {
+            LevelSelection(Input);
+        }
+        else if (CurrentScreen == Screen.PasswordEntry)
+        {
+            CheckPassword(Input);
+        }
+        else if (CurrentScreen == Screen.WinScreen)
+        {
+            AfterWinning(Input);
+        }
+    }
+
+    void LevelSelection(string Input)
+    {
+        bool IsValidNumber = (Input == "1" || Input == "2" || Input == "3");
+        if (IsValidNumber)
+        {
+            level = int.Parse(Input);
+            Code = Lv1Passwords[0];
+            AskForPassword();
+        }
+        else if (Input == "all hail eeza pzeeza")
+        {
+            Terminal.ClearScreen();
+            Terminal.WriteLine("you are a wonderful person whomst will reach heaven one day. bless you!");
+        }
+        else
+        {
+            Terminal.WriteLine("Please enter a valid level or type");
+            Terminal.WriteLine("menu to clear");
+        }
+    }
+
+    void AskForPassword()
+    {
+        Terminal.ClearScreen();
+        CurrentScreen = Screen.PasswordEntry;
+        PasswordRandomizer();
+        Terminal.WriteLine("Enter the password (Hint: " + Code.Anagram() + ")");
+    }
+
+    void PasswordRandomizer()
+    {
+        switch (level)
+        {
+            case 1:
+                Code = Lv1Passwords[Random.Range(0, Lv1Passwords.Length)];
+                break;
+            case 2:
+                Code = Lv2Passwords[Random.Range(0, Lv2Passwords.Length)];
+                break;
+            case 3:
+                Code = Lv3Passwords[Random.Range(0, Lv3Passwords.Length)];
+                break;
+            default:
+                Debug.LogError("Invalid level number");
+                break;
+        }
+    }
+
+    void CheckPassword(string Input)
+    {
+        if (Input == Code)
+        {
+            Win(Input);
+        }
+        else
+        {
+            AskForPassword();
+            Terminal.WriteLine("type menu to return");
+        }
+    }
+
+    void Win(string Input)
+    {
+        CurrentScreen = Screen.WinScreen;
+        Terminal.ClearScreen();
+
+        switch (level)
+        {
+            case 1:
+                    Terminal.WriteLine("Congrats! now you can stuff yourself");
+                    Terminal.WriteLine("with as many cakes as you want!");
+                    Terminal.WriteLine(@"
+
+     ♥   ♥   ♥
+     ║   ║   ║
+    @@@@@@@@@@@
+   ▒▒▒▒▒▒▒▒▒▒▒▒▒
+   ▀▀▀▀▀▀▀▀▀▀▀▀▀"                      );
+
+                break;
+            case 2:
+                    Terminal.WriteLine("good job, this supermarket really");
+                    Terminal.WriteLine("needs to up its security system...");
+                    Terminal.WriteLine(@"         _ _
+     .-/ / /
+    / | | |,---.
+    |       ,-. |
+    |       \_/ \
+     \       __.'
+      |     /"                             );
+
+                    break;
+            case 3:
+                    Terminal.WriteLine("if you just broke in to the white");
+                    Terminal.WriteLine("house, we are in serious trouble...");
+                    Terminal.WriteLine(@"
+             __.-.__
+     _____n.[_______].n_____
+    |'_'_'||==||=||==||'_'_']
+    |     ||  || ||  ||     |
+    |.....||..||.||..||.....|
+    |_____||__||_||__||_____|"         );
+
+                    break;
+        }
+            AfterWinning(Input);
+    }
+
+    void AfterWinning(string Input)
+    {
+        if (Input == "")
+        {
+            if (level == 3)
+            {
+                    Terminal.ClearScreen();
+                    Terminal.WriteLine("good job!");
+                    MainMenuText();
+            }
+            else
+            {
+                    NextLvlQuestion(Input);
+            }
+        }
+    }
+
+    void NextLvlQuestion(string Input)
+    {
+        CurrentScreen = Screen.NextLevelQuestion;
+        Terminal.ClearScreen();
+        Terminal.WriteLine("Do you want to continue to the");
+        Terminal.WriteLine("next level?");
+        if (Input == "yes")
+        {
+            Debug.Log("it's working");
+            level++;
+            Terminal.ClearScreen();
+            AskForPassword();
+        }
+        else if (Input == "no")
+        {
+            Terminal.ClearScreen();
+            Terminal.WriteLine("welcome back!");
+            MainMenuText();
+        }
+        else
+        {
+            Terminal.ClearScreen();
+            Terminal.WriteLine("Do you want to continue to the");
+            Terminal.WriteLine("next level?");
+        }
+    }
+}
